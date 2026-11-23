@@ -1,0 +1,9 @@
+{
+  "name": "Arquiteto do Outro Lado - Criador de Casos",
+  "short_name": "Arquiteto OP",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#07090e",
+  "theme_color": "#07090e",
+  "icons": []
+}

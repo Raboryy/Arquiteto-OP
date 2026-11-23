@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="medo">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Arquiteto OP">
+<meta name="theme-color" content="#07090e">
+<title>Arquiteto do Outro Lado // Criador de Casos</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+/* --- PALETAS DE TEMAS (MODO NOTURNO / NOIR) --- */
+:root, html[data-theme="medo"] {
+  --bg-app: #07090e;
+  --panel-app: #0f141d;
+  --border-app: #1e293b;
+  --accent-neon: #e2e8f0;
+  --accent-bright: #38bdf8;
+  --accent-mid: #334155;
+  --text-main: #f8fafc;
+  --muted: #94a3b8;
+  --glow-effect: rgba(56, 189, 248, 0.25);
+  --input: #040609;
+}
+
+html[data-theme="energia"] {
+  --bg-app: #08050d;
+  --panel-app: #120a1a;
+  --border-app: #2e1065;
+  --accent-neon: #c084fc;
+  --accent-bright: #e879f9;
+  --accent-mid: #7e22ce;
+  --text-main: #f3f4f6;
+  --muted: #a78bfa;
+  --glow-effect: rgba(192, 132, 252, 0.3);
+  --input: #050308;
+}
+
+html[data-theme="conhecimento"] {
+  --bg-app: #0a0905;
+  --panel-app: #141109;
+  --border-app: #422006;
+  --accent-neon: #fbbf24;
+  --accent-bright: #fde047;
+  --accent-mid: #b45309;
+  --text-main: #fefce8;
+  --muted: #d97706;
+  --glow-effect: rgba(251, 191, 36, 0.28);
+  --input: #060502;
+}
+
+html[data-theme="sangue"] {
+  --bg-app: #0c0404;
+  --panel-app: #170808;
+  --border-app: #450a0a;
+  --accent-neon: #f87171;
+  --accent-bright: #ef4444;
+  --accent-mid: #991b1b;
+  --text-main: #fef2f2;
+  --muted: #fca5a5;
+  --glow-effect: rgba(239, 68, 68, 0.3);
+  --input: #060202;
+}
+
+html[data-theme="morte"] {
+  --bg-app: #050506;
+  --panel-app: #0e0e11;
+  --border-app: #27272a;
+  --accent-neon: #f4f4f5;
+  --accent-bright: #ffffff;
+  --accent-mid: #3f3f46;
+  --text-main: #fafafa;
+  --muted: #a1a1aa;
+  --glow-effect: rgba(255, 255, 255, 0.2);
+  --input: #020203;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Courier New", Courier, "Lucida Sans Typewriter", monospace;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  background: var(--bg-app);
+  color: var(--text-main);
+}
+
+body {
+  padding: 10px 10px 95px 10px;
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-text-size-adjust: 100%;
+}
+
+.wrap {
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+#scanline-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.28) 50%);
+  background-size: 100% 4px;
+  opacity: 0.55;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--panel-app);
+  border: 1px solid var(--accent-bright);
+  box-shadow: 0 0 14px var(--glow-effect);
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+header h1 {
+  font-size: 1.05rem;
+  color: var(--accent-neon);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 8px;
+  text-shadow: 0 0 8px var(--glow-effect);
+}
+
+button, select, input, textarea {
+  background: var(--input);
+  color: var(--text-main);
+  border: 1px solid var(--border-app);
+  padding: 9px 11px;
+  border-radius: 6px;
+  font-size: 15px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+select {
+  padding-right: 8px;
+  width: 100%;
+  text-overflow: ellipsis;
+}
+
+button {
+  font-weight: bold;
+  min-height: 42px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  touch-action: manipulation;
+}
+
+button:active {
+  opacity: 0.75;
+}
+
+.btn-p {
+  background: var(--accent-mid);
+  border-color: var(--accent-bright);
+  color: #fff;
+  box-shadow: 0 0 8px var(--glow-effect);
+}
+
+.btn-s {
+  background: #131822;
+  border-color: var(--border-app);
+  color: var(--accent-neon);
+}
+
+.btn-sm {
+  min-height: 34px;
+  padding: 5px 10px;
+  font-size: 13px;
+}
+
+.btn-red {
+  background: #7f1d1d;
+  border-color: #ef4444;
+  color: #fecaca;
+}
+
+.btn-green {
+  background: #14532d;
+  border-color: #22c55e;
+  color: #bbf7d0;
+}
+
+.view { display: none; }
+.view.active { display: block; }
+
+.card {
+  background: var(--panel-app);
+  border: 1px solid var(--border-app);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.6);
+}
+
+.card h2 {
+  font-size: 0.95rem;
+  color: var(--accent-bright);
+  margin-bottom: 10px;
+  border-bottom: 1px dashed var(--border-app);
+  padding-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.row > label {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding-right: 8px;
+}
+
+.row > input, .row > select {
+  flex: 2;
+  min-width: 0;
+}
+
+.cols {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.cols > div {
+  flex: 1;
+  margin-right: 6px;
+}
+
+.cols > div:last-child {
+  margin-right: 0;
+}
+
+.cols label {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--muted);
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+
+.cols input, .cols select {
+  width: 100%;
+  padding: 7px 6px;
+}
+
+.btnrow {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.btnrow > * {
+  margin-right: 6px;
+  margin-bottom: 6px;
+}
+
+.tabs {
+  display: flex;
+  background: var(--panel-app);
+  border: 1px solid var(--accent-bright);
+  border-radius: 10px;
+  overflow-x: auto;
+  margin-bottom: 12px;
+  -webkit-overflow-scrolling: touch;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.75);
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  color: var(--muted);
+  padding: 11px 12px;
+  white-space: nowrap;
+  flex: 1;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+}
+
+.tab.active {
+  color: var(--accent-bright);
+  background: var(--input);
+  border-bottom-color: var(--accent-bright);
+  text-shadow: 0 0 6px var(--glow-effect);
+}
+
+.sheet-tab { display: none; }
+.sheet-tab.active { display: block; }
+
+.sub {
+  background: var(--input);
+  border: 1px solid var(--border-app);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 10px;
+}
+
+@media (min-width: 720px) {
+  .grid2 { grid-template-columns: 1fr 1fr; }
+}
+
+.minis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 6px;
+  margin-bottom: 10px;
+}
+
+.mini {
+  background: var(--input);
+  border: 1px solid var(--border-app);
+  border-radius: 8px;
+  padding: 8px 4px;
+  text-align: center;
+}
+
+.mini small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.mini b {
+  font-size: 1.05rem;
+  color: var(--accent-bright);
+}
+
+.chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.74rem;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.chip-red { background: rgba(153,27,27,0.45); border: 1px solid #ef4444; color: #fca5a5; }
+.chip-orange { background: rgba(154,52,18,0.45); border: 1px solid #f97316; color: #fed7aa; }
+.chip-blue { background: rgba(30,58,138,0.45); border: 1px solid #38bdf8; color: #bae6fd; }
+.chip-purple { background: rgba(88,28,135,0.45); border: 1px solid #c084fc; color: #e9d5ff; }
+.chip-ok { background: rgba(20,83,45,0.45); border: 1px solid #22c55e; color: #bbf7d0; }
+
+/* Bolinhas de Relacionamento */
+.rel-row {
+  display: flex;
+  align-items: center;
+  background: var(--panel-app);
+  border: 1px solid var(--border-app);
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.rel-dots {
+  display: flex;
+  margin: 0 10px;
+}
+
+.rel-dot {
+  width: 28px;
+  height: 28px;
+  min-height: 28px;
+  border-radius: 14px;
+  border: 2px solid var(--accent-bright);
+  background: transparent;
+  margin-right: 5px;
+  padding: 0;
+  color: var(--accent-bright);
+  font-size: 14px;
+  line-height: 24px;
+  text-align: center;
+}
+
+.rel-dot.filled {
+  background: var(--accent-bright);
+  color: #000;
+  box-shadow: 0 0 8px var(--glow-effect);
+}
+
+/* Modo Leitura (Dossiê Final Publicado) */
+.book-doc {
+  background: var(--panel-app);
+  border: 2px solid var(--accent-bright);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: inset 0 0 25px var(--glow-effect);
+}
+
+.book-h1 {
+  font-size: 1.35rem;
+  color: var(--accent-bright);
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--accent-bright);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.book-h2 {
+  font-size: 1.05rem;
+  color: var(--accent-neon);
+  text-transform: uppercase;
+  border-bottom: 1px dashed var(--border-app);
+  padding-bottom: 4px;
+  margin: 16px 0 8px 0;
+}
+
+.read-aloud-box {
+  background: var(--input);
+  border-left: 4px solid var(--accent-bright);
+  padding: 10px 12px;
+  margin: 8px 0;
+  font-style: italic;
+  color: var(--text-main);
+}
+
+textarea {
+  width: 100%;
+  height: 95px;
+  resize: vertical;
+}
+
+.lbl-top {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+#theme-fab {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  width: 52px;
+  height: 52px;
+  border-radius: 26px;
+  background: var(--panel-app);
+  border: 2px solid var(--accent-bright);
+  color: var(--accent-bright);
+  box-shadow: 0 0 15px var(--glow-effect);
+  font-size: 22px;
+  z-index: 950;
+  padding: 0;
+}
+
+#theme-menu {
+  display: none;
+  position: fixed;
+  left: 16px;
+  bottom: 76px;
+  background: var(--panel-app);
+  border: 1px solid var(--accent-bright);
+  border-radius: 10px;
+  padding: 12px;
+  width: 245px;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.95);
+  z-index: 999;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.9);
+  z-index: 2000;
+  padding: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.modal .card {
+  max-width: 640px;
+  margin: 20px auto;
+  border-color: var(--accent-bright);
+}
+
+#toast {
+  position: fixed;
+  left: 50%;
+  top: 60px;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  background: var(--panel-app);
+  border: 1px solid var(--accent-bright);
+  color: var(--accent-neon);
+  padding: 10px 18px;
+  border-radius: 8px;
+  z-index: 3000;
+  display: none;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 0 15px var(--glow-effect);
+  font-weight: bold;
+}
+
+#save-ind {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-right: 8px;
+  white-space: nowrap;
+}
+</style>
+</head>
+<body>
+<div id="scanline-overlay"></div>
+
+<div class="wrap">
+
+  <!-- VISÃO 1: LISTA DE PROJETOS DE CAMPANHA -->
+  <div id="view-list" class="view active">
+    <header>
+      <h1>Arquiteto OP // Criador de Casos</h1>
+      <button class="btn-p" type="button" data-act="novoProjeto">+ Novo Caso</button>
+    </header>
+    <div class="card">
+      <div class="hint">Planeje missões completas, amarre pistas pela Regra das Três Pistas, gere NPCs pela Tabela 6.2 e balanceie o VD dos encontros antes da mesa.</div>
+      <button class="btn-s" type="button" data-act="backup" style="width:100%">Exportar / Importar Projetos (.json)</button>
+    </div>
+    <div id="proj-list"></div>
+  </div>
+
+  <!-- VISÃO 2: EDITOR DE CAMPANHA -->
+  <div id="view-editor" class="view">
+    <header>
+      <button class="btn-s btn-sm" type="button" data-act="voltar">&larr; Projetos</button>
+      <h1 id="ed-title">Caso</h1>
+      <span id="save-ind">Salvo</span>
+      <button class="btn-p btn-sm" type="button" data-act="salvar">Salvar</button>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" type="button" data-act="aba" data-arg="nucleo">1. Núcleo &amp; Gerador</button>
+      <button class="tab" type="button" data-act="aba" data-arg="roteiro">2. Roteiro &amp; Atos</button>
+      <button class="tab" type="button" data-act="aba" data-arg="cenas">3. Cenas &amp; Pistas</button>
+      <button class="tab" type="button" data-act="aba" data-arg="elenco">4. Elenco &amp; Locais</button>
+      <button class="tab" type="button" data-act="aba" data-arg="encontros">5. Encontros (VD)</button>
+      <button class="tab" type="button" data-act="aba" data-arg="leitura">6. Dossiê Final</button>
+    </div>
+
+    <!-- ABA 1: NÚCLEO DO CASO & GERADOR OFICIAL DE MISSÕES -->
+    <div id="tab-nucleo" class="sheet-tab active">
+      <div class="card">
+        <h2>Gerador Oficial de Missões (Livro Base pp. 155–161)</h2>
+        <div class="hint">Sorteia Sujeito (1d8), Ação (1d10), Local (1d20), Aliado (1d4), Objeto (1d6) e Reviravolta (1d12) com as sub-rolagens automáticas.</div>
+        <div class="btnrow">
+          <button class="btn-p" type="button" data-act="gerarSemente">&#127922; Sortear Semente de Caso</button>
+          <button class="btn-s" type="button" data-act="aplicarSemente" id="btn-aplicar-semente" style="display:none;">&#10148; Copiar Semente para a Premissa</button>
+        </div>
+        <div id="box-semente" class="sub" style="display:none; border-color:var(--accent-bright); margin-top:6px;"></div>
+      </div>
+
+      <div class="card">
+        <h2>Parâmetros da Campanha &amp; Equipe</h2>
+        <div class="row"><label>Título do Caso</label><input type="text" id="p-titulo" data-pf="titulo"></div>
+        <div class="cols">
+          <div>
+            <label>Modo de Jogo</label>
+            <select id="p-modo" data-pf="modo">
+              <option value="agentes">Agentes da Ordem (NEX 5% a 99%)</option>
+              <option value="sobreviventes">Sobreviventes (NEX 0% / Estágios 1–5)</option>
+            </select>
+          </div>
+          <div>
+            <label>Nº de Jogadores</label>
+            <input type="number" id="p-qtd-players" data-pf="qtdPlayers" data-num="1" min="1" max="10">
+          </div>
+          <div id="col-nex-medio">
+            <label>NEX Médio (%)</label>
+            <input type="number" id="p-nex-medio" data-pf="nexMedio" data-num="1" min="5" max="99" step="5">
+          </div>
+        </div>
+
+        <div class="cols">
+          <div>
+            <label>Elemento Principal</label>
+            <select id="p-elem1" data-pf="elem1">
+              <option value="Medo">Medo (Mistério / Terror Psicológico)</option>
+              <option value="Sangue">Sangue (Visceral / Brutalidade)</option>
+              <option value="Morte">Morte (Tempo / Melancolia / Espiral)</option>
+              <option value="Conhecimento">Conhecimento (Enigmas / Manipulação)</option>
+              <option value="Energia">Energia (Caos / Tecnologia / Imprevisível)</option>
+            </select>
+          </div>
+          <div>
+            <label>Elemento Secundário</label>
+            <select id="p-elem2" data-pf="elem2">
+              <option value="Nenhum">Nenhum</option>
+              <option value="Medo">Medo</option>
+              <option value="Sangue">Sangue</option>
+              <option value="Morte">Morte</option>
+              <option value="Conhecimento">Conhecimento</option>
+              <option value="Energia">Energia</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Estrutura de Mistério</h2>
+        <label class="lbl-top">1. O Chamado (Como os agentes recebem o caso / Gancho inicial)</label>
+        <textarea id="p-chamado" data-pf="chamado" placeholder="Ex: Veríssimo convoca a equipe após o desaparecimento de um arquivista em Pontal do Paraná..."></textarea>
+
+        <label class="lbl-top" style="margin-top:10px;">2. A Verdade Oculta (O que realmente está acontecendo nos bastidores)</label>
+        <textarea id="p-verdade" data-pf="verdade" placeholder="Ex: O próprio arquivista invocou uma criatura de Conhecimento para apagar suas memórias..."></textarea>
+
+        <label class="lbl-top" style="margin-top:10px;">3. O Relógio do Vilão (O que acontece se o grupo demorar ou falhar)</label>
+        <textarea id="p-relogio" data-pf="relogio" placeholder="Estágio 1: Mais uma vítima some. | Estágio 2: A membrana rompe no local. | Estágio 3: O ritual se completa..."></textarea>
+      </div>
+    </div>
+
+    <!-- ABA 2: ROTEIRO POR ATOS & RECOMPENSAS -->
+    <div id="tab-roteiro" class="sheet-tab">
+      <div class="card">
+        <h2>Estrutura Dramática em 3 Atos</h2>
+        <div class="hint">Organize o fluxo narrativo da aventura antes de detalhar cada cena de investigação.</div>
+
+        <label class="lbl-top">Ato I — O Incidente &amp; Chegada (Introdução, Briefing e Primeiras Impressões)</label>
+        <textarea id="p-ato1" data-pf="ato1" placeholder="Como a sessão começa, primeira cena de impacto e abertura da investigação..."></textarea>
+
+        <label class="lbl-top" style="margin-top:10px;">Ato II — A Investigação &amp; A Reviravolta (Complicações e Meio da Missão)</label>
+        <textarea id="p-ato2" data-pf="ato2" placeholder="Descobertas principais, contra-ataque dos cultistas, evento surpresa ou traição..."></textarea>
+
+        <label class="lbl-top" style="margin-top:10px;">Ato III — O Clímax &amp; Desfecho (Confronto Final e Consequências)</label>
+        <textarea id="p-ato3" data-pf="ato3" placeholder="Como o ritual pode ser interrompido, condições de vitória/fuga e impacto na Membrana..."></textarea>
+      </div>
+
+      <div class="card">
+        <h2>Recompensas, Documentos &amp; Itens Paranormais</h2>
+        <div class="hint">Registre itens amaldiçoados, ingredientes de ritual, documentos ou pontos de prestígio obtidos ao concluir o caso.</div>
+        <textarea id="p-recompensas" data-pf="recompensas" placeholder="Ex: Tomo de Conhecimento (Cat. II), Selo de Cicatrização, +10 Pontos de Prestígio..."></textarea>
+      </div>
+    </div>
+
+    <!-- ABA 3: TEIA DE CENAS & PISTAS (DESIGN DE INVESTIGAÇÃO) -->
+    <div id="tab-cenas" class="sheet-tab">
+      <div class="card">
+        <h2>Arquitetura de Investigação (LB pp. 81, 162–163 &amp; SaH pp. 81–83)</h2>
+        <div class="hint">
+          • <b>Cena Principal:</b> Recomenda-se <b>3 a 4 Pontos de Interesse/Pistas</b> divididos em <b>DT 15 (Baixa)</b>, <b>DT 20 (Média)</b> e <b>DT 25+ (Alta)</b>.<br>
+          • <b>Cena Secundária:</b> 1 pista rápida. | <b>Investigação Fluida:</b> Sem contagem de rodadas (conversas/exploração calma).
+        </div>
+        <button class="btn-p" type="button" data-act="addCenaPlanejada">+ Adicionar Cena / Nó de Investigação</button>
+      </div>
+      <div id="cenas-plan-list"></div>
+    </div>
+
+    <!-- ABA 4: ELENCO NARRATIVO & LOCAIS -->
+    <div id="tab-elenco" class="sheet-tab">
+      <div class="card">
+        <h2>Elenco da História (NPCs, Aliados, Suspeitos &amp; Antagonistas)</h2>
+        <div class="hint">Defina a função dramática de cada personagem, o que ele sabe, o que esconde e sorteie traços oficiais pela <b>Tabela 6.2 (2d20, p. 165) + Roupas</b>.</div>
+        <div class="btnrow">
+          <button class="btn-p" type="button" data-act="gerarNpcElenco">&#127922; Gerar NPC com Tabela 6.2 + Roupas</button>
+          <button class="btn-s" type="button" data-act="addNpcElencoVazio">+ Adicionar Personagem Manual</button>
+        </div>
+      </div>
+      <div id="elenco-list"></div>
+
+      <div class="card" style="margin-top:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <h2 style="margin:0; border:none; padding:0;">Cenários &amp; Locais-Chave</h2>
+          <button class="btn-p btn-sm" type="button" data-act="addLocalPlan">+ Novo Local</button>
+        </div>
+        <div id="locais-plan-list"></div>
+      </div>
+    </div>
+
+    <!-- ABA 5: BALANCEADOR DE ENCONTROS (CALCULADORA DE VD) -->
+    <div id="tab-encontros" class="sheet-tab">
+      <div class="card">
+        <h2>Calculadora Oficial de Balanceamento (LB pp. 170–171 &amp; SaH p. 30)</h2>
+        <div id="vd-resumo-box"></div>
+        <div class="btnrow" style="margin-top:8px;">
+          <button class="btn-p" type="button" data-act="addEncontro">+ Planejar Novo Encontro / Cena de Ação</button>
+        </div>
+      </div>
+      <div id="encontros-list"></div>
+    </div>
+
+    <!-- ABA 6: DOSSIÊ FINAL (MODO LEITURA PUBLICADO) -->
+    <div id="tab-leitura" class="sheet-tab">
+      <div class="card">
+        <div class="btnrow" style="margin-bottom:0; justify-content:space-between;">
+          <span class="hint" style="margin:0; align-self:center;">Visualização limpa de roteiro pronto para mestrar no iPad.</span>
+          <button class="btn-p btn-sm" type="button" data-act="copiarRoteiroTexto">&#128203; Copiar Roteiro em Texto</button>
+        </div>
+      </div>
+      <div id="dossie-publicado-container"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BOTÃO FLUTUANTE DE TEMAS (CANTO ESQUERDO) -->
+<button id="theme-fab" type="button" data-act="themeToggle" title="Mudar Elemento / Tema">&#128065;</button>
+<div id="theme-menu">
+  <div style="font-size: 0.75rem; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border-app); padding-bottom: 4px;">Sintonizar Elemento</div>
+  <button class="btn-s btn-sm" type="button" data-act="mudarTema" data-arg="medo" style="width:100%; margin-bottom:5px; text-align:left; border-left: 4px solid #38bdf8;">&#9898; Medo - Noir Azulado (Padrão)</button>
+  <button class="btn-s btn-sm" type="button" data-act="mudarTema" data-arg="energia" style="width:100%; margin-bottom:5px; text-align:left; border-left: 4px solid #c084fc;">&#128995; Roxo - Energia</button>
+  <button class="btn-s btn-sm" type="button" data-act="mudarTema" data-arg="conhecimento" style="width:100%; margin-bottom:5px; text-align:left; border-left: 4px solid #fbbf24;">&#128993; Amarelo - Conhecimento</button>
+  <button class="btn-s btn-sm" type="button" data-act="mudarTema" data-arg="sangue" style="width:100%; margin-bottom:5px; text-align:left; border-left: 4px solid #f87171;">&#128308; Vermelho - Sangue</button>
+  <button class="btn-s btn-sm" type="button" data-act="mudarTema" data-arg="morte" style="width:100%; margin-bottom:8px; text-align:left; border-left: 4px solid #f4f4f5;">&#128128; Morte - Preto e Branco</button>
+  <button class="btn-p btn-sm" type="button" data-act="toggleScanlines" style="width:100%; text-align:center;">&#128250; Linhas de Dossiê (CRT)</button>
+</div>
+
+<!-- MODAL DE BACKUP -->
+<div id="backup-modal" class="modal">
+  <div class="card">
+    <h2>Backup dos Projetos de Campanha (.json)</h2>
+    <p class="hint">Para iOS 12: Use <b>Copiar Texto</b> ou <b>Compartilhar</b> para salvar no app Notas. Para restaurar, cole o JSON abaixo e toque em Restaurar.</p>
+    <textarea id="backup-text" style="height:160px; font-size:12px; margin-bottom:10px;"></textarea>
+    <div class="btnrow">
+      <button class="btn-p" type="button" data-act="bkCopy">Copiar Texto</button>
+      <button class="btn-s" type="button" data-act="bkShare">Compartilhar</button>
+    </div>
+    <div class="row" style="margin-top:6px"><label>Ou importar arquivo .json</label><input type="file" id="bk-file" accept=".json,application/json,text/plain"></div>
+    <div class="btnrow">
+      <button class="btn-p" type="button" data-act="bkImport">Restaurar do Texto</button>
+      <button class="btn-s" type="button" data-act="bkClose">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function () {
+'use strict';
+
+if (!Element.prototype.matches) {
+  Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+}
+if (!Element.prototype.closest) {
+  Element.prototype.closest = function (s) {
+    var el = this;
+    do {
+      if (Element.prototype.matches.call(el, s)) return el;
+      el = el.parentElement || el.parentNode;
+    } while (el !== null && el.nodeType === 1);
+    return null;
+  };
+}
+
+var KEY = 'arquiteto_op_casos_v1';
+
+/* --- 1. GERADOR OFICIAL DE MISSÕES (Livro Base pp. 155-161) --- */
+var GEN_ELEMENTOS = ["Sangue", "Morte", "Conhecimento", "Energia"];
+
+var GEN_SUJEITO = [
+  "Inocente curioso",
+  "Criminoso",
+  "Pessoa influente (magnata, político…)",
+  "Bando cultista",
+  "Cultista independente",
+  "Ex-agente da Ordo Realitas",
+  "Item amaldiçoado",
+  "Criatura paranormal" // +1d4 elemento
+];
+
+var GEN_ACAO = [
+  "invocou uma criatura de propósito", // +1d4 elemento
+  "invocou uma criatura sem querer", // +1d4 elemento
+  "está sequestrando inocentes",
+  "está assassinando inocentes",
+  "está usando um ritual ou item amaldiçoado para cometer crimes mundanos (roubo, extorsão…)",
+  "está recrutando cultistas",
+  "está pesquisando um ritual perigoso",
+  "está coletando itens amaldiçoados",
+  "matou um agente da Ordo Realitas",
+  "COMBINAR" // 10: role duas vezes e combine
+];
+
+var GEN_LOCAL = [
+  {n:"Escola", star:true}, {n:"Hospital", star:true}, {n:"Vilarejo", star:true}, {n:"Fazenda", star:true},
+  {n:"Mata fechada", star:false}, {n:"Becos de metrópole", star:false}, {n:"Arranha-céu", star:true},
+  {n:"Grande loja de departamento", star:true}, {n:"Esgoto", star:false}, {n:"Zona industrial da cidade", star:true},
+  {n:"Shopping center", star:true}, {n:"Orfanato", star:true}, {n:"Museu", star:true},
+  {n:"Cemitério", star:false}, {n:"Delegacia ou base militar", star:false}, {n:"Mansão", star:true},
+  {n:"Antiga sede da Ordo Realitas", star:false}, {n:"Navio", star:true}, {n:"Ilha remota", star:false},
+  {n:"COMBINAR", star:false}
+];
+
+var GEN_EVENTO = [
+  "o aparecimento de uma/outra criatura paranormal de grande poder",
+  "a chegada de reforços inimigos",
+  "uma doença paranormal / maldição afetando o aliado",
+  "civis se revoltando contra o grupo",
+  "a revelação de que o aliado era o vilão",
+  "a revelação de que as ações do inimigo eram justificadas",
+  "a perda de seus equipamentos (por furto, falha tecnológica…)",
+  "ter que proteger um civil",
+  "uma autoridade ou força da lei interferindo no caso",
+  "uma área do local sendo isolada ou colapsando",
+  "o antagonista escapando ou antecipando o confronto",
+  "uma escolha moral sem resposta certa"
+];
+
+function dFace(f) { return Math.floor(Math.random() * f) + 1; }
+function sortearElemento() { return GEN_ELEMENTOS[dFace(4) - 1]; }
+
+function rolarSujeito() {
+  var r = dFace(8);
+  var txt = GEN_SUJEITO[r - 1];
+  if (r === 8) txt += " de " + sortearElemento();
+  return txt + " [1d8=" + r + "]";
+}
+
+function rolarAcao() {
+  var r = dFace(10);
+  if (r === 10) {
+    var a1 = dFace(9), a2 = dFace(9);
+    while (a2 === a1) a2 = dFace(9);
+    var t1 = GEN_ACAO[a1 - 1] + (a1 <= 2 ? " (" + sortearElemento() + ")" : "");
+    var t2 = GEN_ACAO[a2 - 1] + (a2 <= 2 ? " (" + sortearElemento() + ")" : "");
+    return t1 + " E " + t2 + " [1d10=10]";
+  }
+  var txt = GEN_ACAO[r - 1];
+  if (r <= 2) txt += " (" + sortearElemento() + ")";
+  return txt + " [1d10=" + r + "]";
+}
+
+function rolarLocal() {
+  function pegaUm(idx) {
+    var item = GEN_LOCAL[idx];
+    if (!item.star) return item.n;
+    var estado = (dFace(6) % 2 === 0) ? "habitado(a)" : "abandonado(a)";
+    return item.n + " (" + estado + ")";
+  }
+  var r = dFace(20);
+  if (r === 20) {
+    var l1 = dFace(19) - 1, l2 = dFace(19) - 1;
+    while (l2 === l1) l2 = dFace(19) - 1;
+    return pegaUm(l1) + " conectado a um(a) " + pegaUm(l2) + " [1d20=20]";
+  }
+  return pegaUm(r - 1) + " [1d20=" + r + "]";
+}
+
+function rolarAliado() {
+  var r = dFace(4);
+  if (r === 1) return "Civil alheio ao paranormal [1d4=1]";
+  if (r === 2) return "Civil exposto ao paranormal [1d4=2]";
+  if (r === 3) return "Antigo conhecido de um dos agentes (amigo, ex-colega, ex-namorado…) [1d4=3]";
+  var status = (dFace(6) % 2 === 0) ? "na ativa" : "aposentado";
+  return "Outro agente da Ordo Realitas (" + status + ") [1d4=4]";
+}
+
+function rolarObjeto() {
+  function pegaObj(r) {
+    if (r === 1) {
+      var sub = dFace(6);
+      var tipo = sub <= 3 ? "arma" : (sub === 4 ? "proteção" : "acessório/item geral");
+      return "Equipamento comum (" + tipo + ")";
+    }
+    if (r === 2) return "Ingrediente para um ritual poderoso (máscara ritualística, gema rara…)";
+    if (r === 3) return "Equipamento com " + (dFace(3) - 1) + " modificação(ões)";
+    if (r === 4) return "Artefato de grande valor para a Ordem (tomo antigo, relíquia ancestral…)";
+    return "Item amaldiçoado";
+  }
+  var r = dFace(6);
+  if (r === 6) {
+    var o1 = dFace(5), o2 = dFace(5);
+    while (o2 === o1) o2 = dFace(5);
+    return pegaObj(o1) + " + " + pegaObj(o2) + " [1d6=6]";
+  }
+  return pegaObj(r) + " [1d6=" + r + "]";
+}
+
+function rolarEvento() {
+  var r = dFace(12);
+  return GEN_EVENTO[r - 1] + " [1d12=" + r + "]";
+}
+
+/* --- 2. TABELA 6.2 (p. 165) + FAIXA ETÁRIA (p. 164) + ROUPAS --- */
+var NOMES_NPC = ["Carlos", "Helena", "Marcos", "Beatriz", "Roberto", "Camila", "Vicente", "Lúcia", "Eduardo", "Tereza", "Jonas", "Fernanda", "Otávio", "Clara", "Sérgio", "Mariana", "Valdir", "Irene", "Henrique", "Bárbara"];
+var SOBRENOMES_NPC = ["Silva", "Boeira", "Montenegro", "Vargas", "Almeida", "Cavalcanti", "Ribeiro", "Kowalski", "Medeiros", "Ferreira", "Peixoto", "Castilho", "Moraes", "Dantas", "Fontes", "Nogueira"];
+
+var TABELA_62 = {
+  2:  {ap: "Caolho", gAp: "olhos", pe: "Muito religioso, cita passagens sagradas", gPe: "crenca"},
+  3:  {ap: "Marcas de queimadura na pele", gAp: "", pe: "Segue as leis ao pé da letra", gPe: "lei"},
+  4:  {ap: "Sardas no rosto", gAp: "", pe: "Não consegue decorar nomes próprios", gPe: ""},
+  5:  {ap: "Nariz torto ou quebrado", gAp: "nariz", pe: "Está sempre arrumando o cabelo", gPe: ""},
+  6:  {ap: "Cabelos coloridos (lilás, anil…)", gAp: "cabelo_cor", pe: "Enérgico, não deixa ninguém ficar parado", gPe: "energia"},
+  7:  {ap: "Gago", gAp: "fala", pe: "Romântico e acredita no bem de todos", gPe: "visao"},
+  8:  {ap: "Rosto de traços delicados", gAp: "rosto", pe: "Ansioso e rói unhas", gPe: "calma"},
+  9:  {ap: "Olheiras profundas", gAp: "", pe: "Metódico e perfeccionista", gPe: "metodo"},
+  10: {ap: "Postura encurvada", gAp: "postura", pe: "Se irrita facilmente e não leva desaforo pra casa", gPe: "paciencia"},
+  11: {ap: "Usa roupas velhas, desbotadas ou esfarrapadas", gAp: "roupa_tab", pe: "Observador e curioso", gPe: "atencao"},
+  12: {ap: "Muito baixo", gAp: "altura", pe: "Ambicioso e calculista", gPe: "visao"},
+  13: {ap: "Nariz grande", gAp: "nariz", pe: "Simpático e festeiro", gPe: "social"},
+  14: {ap: "Cicatriz no rosto", gAp: "", pe: "Pensativo e distraído", gPe: "atencao"},
+  15: {ap: "Acima do peso", gAp: "peso", pe: "Respeitoso e educado", gPe: "educacao"},
+  16: {ap: "Baixo", gAp: "altura", pe: "Cuidadoso, pensa antes de falar", gPe: "impulso"},
+  17: {ap: "Tatuagens pequenas", gAp: "tatuagem", pe: "Corajoso", gPe: "coragem"},
+  18: {ap: "Rosto angular e elegante", gAp: "rosto", pe: "Empolgado e falastrão", gPe: "social"},
+  19: {ap: "Postura altiva", gAp: "postura", pe: "Sério e formal", gPe: "humor"},
+  20: {ap: "Magro", gAp: "peso", pe: "Inocente e otimista", gPe: "visao"},
+  21: {ap: "Alto", gAp: "altura", pe: "Teimoso", gPe: ""},
+  22: {ap: "Rosto quadrado e firme", gAp: "rosto", pe: "Desconfiado e pessimista", gPe: "visao"},
+  23: {ap: "Ombros largos", gAp: "", pe: "Brincalhão e informal", gPe: "humor"},
+  24: {ap: "Rosto redondo e simpático", gAp: "rosto", pe: "Tímido e modesto", gPe: "social"},
+  25: {ap: "Nariz pequeno", gAp: "nariz", pe: "Covarde", gPe: "coragem"},
+  26: {ap: "Usa piercings", gAp: "", pe: "Impulsivo, fala antes de pensar", gPe: "impulso"},
+  27: {ap: "Usa roupas formais", gAp: "roupa_tab", pe: "Grosseiro e vulgar", gPe: "educacao"},
+  28: {ap: "Cabelos compridos (até os ombros)", gAp: "cabelo_comp", pe: "Fala sem parar e com todo mundo", gPe: "social"},
+  29: {ap: "Tatuagens grandes à mostra", gAp: "tatuagem", pe: "Gosta de ficar sozinho", gPe: "social"},
+  30: {ap: "Barba ou maquiagem estilosa", gAp: "", pe: "Mandão e autoritário", gPe: ""},
+  31: {ap: "Extremamente alto", gAp: "altura", pe: "Chato e grudento", gPe: "social"},
+  32: {ap: "Corte de cabelo estiloso (moicano, undercut…)", gAp: "cabelo_comp", pe: "Cínico e insensível", gPe: "visao"},
+  33: {ap: "Usa roupas de marca", gAp: "roupa_tab", pe: "Orgulhoso de seu trabalho", gPe: ""},
+  34: {ap: "Cabelos muito compridos (até a cintura)", gAp: "cabelo_comp", pe: "Sempre tenta levar vantagem", gPe: "lei"},
+  35: {ap: "Tique nervoso no olho", gAp: "", pe: "Responsável e leva sua palavra muito a sério", gPe: "lei"},
+  36: {ap: "Calvo, careca ou cabelo raspado", gAp: "cabelo_comp", pe: "Preguiçoso e fica bocejando constantemente", gPe: "energia"},
+  37: {ap: "Olhos grandes e expressivos", gAp: "olhos", pe: "Espirra ou tosse com frequência", gPe: ""},
+  38: {ap: "Banguela", gAp: "", pe: "Gosta de cantarolar alegremente", gPe: "humor"},
+  39: {ap: "Olhos de cor rara (azul, verde, âmbar…)", gAp: "olhos_cor", pe: "Gosta de negociar favores", gPe: ""},
+  40: {ap: "Olhos de cores diferentes", gAp: "olhos_cor", pe: "Supersticioso, carrega amuletos de boa sorte", gPe: "crenca"}
+};
+
+var ROUPAS_SUPERIOR = [
+  "sobretudo escuro pesado com gola levantada",
+  "jaqueta jeans surrada com costuras reforçadas",
+  "camisa de flanela xadrez aberta sobre camiseta preta",
+  "moletom escuro largo com capuz e bolsos fundos",
+  "casaco de couro gasto nos punhos e cotovelos",
+  "camisa social com mangas dobradas até o cotovelo",
+  "suéter de tricô fechado em tom acinzentado",
+  "jaqueta corta-vento impermeável escura",
+  "colete utilitário cheio de pequenos bolsos",
+  "blazer escuro levemente amarrotado"
+];
+
+var ROUPAS_INFERIOR = [
+  "calça cargo escura e coturnos pesados",
+  "jeans escuro e tênis gastos de caminhada",
+  "calça de sarja preta e botas de couro",
+  "calça de alfaiataria escura e sapatos sociais",
+  "calça jeans tradicional e botas de trabalho",
+  "calça escura confortável e sapatos discretos"
+];
+
+var ROUPAS_DETALHE = [
+  "bolsa tiracolo de lona gasta nos cantos",
+  "relógio de pulso metálico antigo e arranhado",
+  "cachecol escuro enrolado no pescoço",
+  "luvas escuras sem dedos",
+  "chaveiro pesado preso ao passador do cinto",
+  "bloco de anotações e caneta no bolso do peito",
+  "manchas recentes de sereno e poeira na barra",
+  "óculos de armação fina pendurados na gola",
+  "crachá ou carteira de identificação no bolso"
+];
+
+function rolarFaixaEtaria() {
+  var r = dFace(20), faixa = "", idade = 0;
+  if (r === 1) { faixa = "Criança"; idade = dFace(6) + 6; }
+  else if (r === 2) { faixa = "Adolescente"; idade = dFace(4) + 12; }
+  else if (r <= 5) { faixa = "Jovem"; idade = dFace(8) + 16; }
+  else if (r <= 15) { faixa = "Adulto"; idade = dFace(20) + 24; }
+  else if (r <= 18) { faixa = "Maduro"; idade = dFace(20) + 44; }
+  else { faixa = "Idoso"; idade = dFace(20) + 64; }
+  return faixa + " (" + idade + " anos)";
+}
+
+function sortearTabela62(qtd) {
+  var apLista = [], peLista = [], apGrupos = {}, peGrupos = {}, apNums = {}, peNums = {}, guard = 0;
+  while (apLista.length < qtd && guard < 100) {
+    guard++;
+    var rAp = dFace(20) + dFace(20), itemAp = TABELA_62[rAp];
+    if (apNums[rAp] || (itemAp.gAp && apGrupos[itemAp.gAp])) continue;
+    if ((itemAp.gAp === "cabelo_cor" && apNums[36]) || (rAp === 36 && apGrupos["cabelo_cor"])) continue;
+    apNums[rAp] = true;
+    if (itemAp.gAp) apGrupos[itemAp.gAp] = true;
+    apLista.push(itemAp.ap + " [" + rAp + "]");
+  }
+  guard = 0;
+  while (peLista.length < qtd && guard < 100) {
+    guard++;
+    var rPe = dFace(20) + dFace(20), itemPe = TABELA_62[rPe];
+    if (peNums[rPe] || (itemPe.gPe && peGrupos[itemPe.gPe])) continue;
+    peNums[rPe] = true;
+    if (itemPe.gPe) peGrupos[itemPe.gPe] = true;
+    peLista.push(itemPe.pe + " [" + rPe + "]");
+  }
+  return {aparencia: apLista.join("; "), personalidade: peLista.join("; ")};
+}
+
+function sortearRoupa() {
+  var s = ROUPAS_SUPERIOR[Math.floor(Math.random() * ROUPAS_SUPERIOR.length)];
+  var i = ROUPAS_INFERIOR[Math.floor(Math.random() * ROUPAS_INFERIOR.length)];
+  var d = ROUPAS_DETALHE[Math.floor(Math.random() * ROUPAS_DETALHE.length)];
+  return "Veste " + s + ", " + i + " e " + d + ".";
+}
+
+/* --- 3. TABELA DE URGÊNCIA (LB p. 81 / SaH p. 81) --- */
+var URGENCIA_MAP = {
+  "Muito Baixo": {rodadas: 6, desc: "6 rodadas disponíveis (Pressão lenta)"},
+  "Baixo":       {rodadas: 5, desc: "5 rodadas disponíveis"},
+  "Médio":       {rodadas: 4, desc: "4 rodadas disponíveis (Padrão)"},
+  "Alto":        {rodadas: 3, desc: "3 rodadas disponíveis (Tensão elevada)"},
+  "Muito Alto":  {rodadas: 2, desc: "2 rodadas disponíveis (Risco imediato)"},
+  "Fluida":      {rodadas: 0, desc: "Investigação Fluida / Livre (Sem contagem de rodadas, SaH p. 83)"}
+};
+
+var projetos = [];
+var proj = null;
+var ultimaSemente = "";
+var saveTimer = null;
+var scanlinesAtivo = false;
+
+function $(id) { return document.getElementById(id); }
+function esc(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function num(v) { var n = parseFloat(v); return isNaN(n) ? 0 : n; }
+function toast(msg) {
+  var t = $('toast'); t.textContent = msg; t.style.display = 'block';
+  clearTimeout(toast._t); toast._t = setTimeout(function () { t.style.display = 'none'; }, 2400);
+}
+
+/* --- PERSISTÊNCIA --- */
+function carregar() {
+  try {
+    var s = localStorage.getItem(KEY);
+    if (s) { var p = JSON.parse(s); if (Array.isArray(p) && p.length) return p; }
+  } catch (e) {}
+  return [criarProjetoExemplo()];
+}
+
+function salvarAgora() {
+  clearTimeout(saveTimer);
+  try {
+    localStorage.setItem(KEY, JSON.stringify(projetos));
+    var d = new Date();
+    var ind = $('save-ind');
+    if (ind) ind.textContent = 'Salvo ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+  } catch (e) {}
+}
+
+function agendarSalvar() {
+  var ind = $('save-ind');
+  if (ind) ind.textContent = 'Salvando...';
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(salvarAgora, 300);
+}
+
+function criarProjetoExemplo() {
+  return normalizarProj({
+    id: 'proj_' + Date.now(),
+    titulo: 'Operação Maré Negra',
+    modo: 'agentes',
+    qtdPlayers: 4,
+    nexMedio: 15,
+    elem1: 'Morte',
+    elem2: 'Conhecimento',
+    chamado: 'A Ordo Realitas intercepta gravações de rádio vindas de um farol desativado no litoral, onde pescadores locais relatam que o tempo parece passar mais devagar perto das pedras.',
+    verdade: 'Um antigo arquivista da Ordem (ex-agente) está realizando um ritual de Morte para congelar os últimos momentos de vida de sua esposa doente, drenando a energia vital dos moradores.',
+    relogio: '1. O nevoeiro cobre a vila inteira.\n2. Moradores começam a envelhecer décadas em poucas horas.\n3. A Membrana rompe e manifesta um Carniçal da Morte.',
+    ato1: 'Briefing na base e chegada à vila costeira durante uma tempestade atípica. Primeira conversa com o zelador do píer.',
+    ato2: 'Investigação na casa do arquivista e no porão do farol. Reviravolta: a polícia local tenta prender os agentes por invasão enquanto criaturas surgem na neblina.',
+    ato3: 'Confronto no topo do farol para interromper o ritual antes que o relógio alcance o estágio final.',
+    recompensas: 'Diário de Pesquisas de Morte (Cat. II), +15 Pontos de Prestígio, Componente Ritualístico de Morte.',
+    cenas: [
+      {
+        nome: 'Cena 1: O Píer e a Casa do Zelador',
+        tipo: 'Principal',
+        urgencia: 'Fluida',
+        leitura: 'O cheiro de sal e madeira podre domina o ar. As ondas batem contra os pilares em um ritmo estranhamente lento, quase arrastado.',
+        pistas: [
+          {titulo: 'Registro de Barcos', dt: 'Investigação DT 15', desc: 'Mostra entregas noturnas de caixotes pesados para o Farol Velho.', destino: 'Cena 2: O Farol Velho'},
+          {titulo: 'Relógio Parado', dt: 'Ocultismo DT 20', desc: 'Os ponteiros giram ao contrário quando aproximados das cinzas pretas no chão.', destino: 'Cena 2: O Farol Velho'},
+          {titulo: 'Carta Rasgada', dt: 'Percepção DT 25', desc: 'Revela a identidade do ex-agente responsável pelo ritual.', destino: 'Ato III: Confronto'}
+        ]
+      }
+    ],
+    elenco: [
+      {
+        nome: 'Otávio Kowalski',
+        papel: 'Antagonista',
+        ocupacao: 'Ex-agente da Ordo Realitas (VD 40)',
+        faixaEtaria: 'Maduro (58 anos)',
+        atitude: 'Inamistoso',
+        motivacao: 'Salvar a esposa a qualquer custo usando o elemento de Morte.',
+        sabe: 'Conhece todos os protocolos de contenção da Ordem.',
+        esconde: 'A localização exata do foco do ritual no subsolo do farol (Intuição/Investigação DT 20).',
+        aparencia: 'Olheiras profundas [9]; Postura encurvada [10]; Magro [20]. Veste sobretudo escuro pesado, calça de sarja preta e carrega um relógio metálico antigo.',
+        personalidade: 'Metódico e perfeccionista [9]; Sério e formal [19]; Desconfiado e pessimista [22].',
+        relacoes: [{player: 'Agente Veterano', pts: 2, obs: 'Antigo colega de equipe'}]
+      }
+    ],
+    locais: [
+      {nome: 'Farol Velho', clima: 'Neblina espessa e silêncio antinatural', detalhes: 'Escadaria em espiral coberta de lodo negro; sala do gerador serve de altar.'}
+    ],
+    encontros: [
+      {
+        nome: 'Confronto no Subsolo do Farol',
+        inimigos: [
+          {nome: 'Esqueleto de Lodo', vd: 20, qtd: 2},
+          {nome: 'Cultista Iniciado', vd: 20, qtd: 1}
+        ],
+        tatica: 'Os Esqueletos de Lodo bloqueiam a escada enquanto o cultista conjura Decadência à distância.'
+      }
+    ]
+  });
+}
+
+function normalizarProj(p) {
+  if (!p.id) p.id = 'proj_' + Date.now() + '_' + Math.floor(Math.random() * 999);
+  p.titulo = p.titulo || 'Novo Caso Sem Título';
+  p.modo = p.modo || 'agentes';
+  p.qtdPlayers = parseInt(p.qtdPlayers, 10) || 4;
+  p.nexMedio = parseInt(p.nexMedio, 10) || 10;
+  p.elem1 = p.elem1 || 'Medo';
+  p.elem2 = p.elem2 || 'Nenhum';
+  p.chamado = p.chamado || '';
+  p.verdade = p.verdade || '';
+  p.relogio = p.relogio || '';
+  p.ato1 = p.ato1 || '';
+  p.ato2 = p.ato2 || '';
+  p.ato3 = p.ato3 || '';
+  p.recompensas = p.recompensas || '';
+  if (!Array.isArray(p.cenas)) p.cenas = [];
+  if (!Array.isArray(p.elenco)) p.elenco = [];
+  if (!Array.isArray(p.locais)) p.locais = [];
+  if (!Array.isArray(p.encontros)) p.encontros = [];
+  return p;
+}
+
+/* --- RENDERIZAÇÃO DA LISTA DE PROJETOS --- */
+function renderListaProjetos() {
+  var box = $('proj-list');
+  if (!projetos.length) {
+    box.innerHTML = '<p class="hint" style="text-align:center; padding:24px;">Nenhum projeto criado ainda. Toque em "+ Novo Caso".</p>';
+    return;
+  }
+  var h = '';
+  for (var i = 0; i < projetos.length; i++) {
+    var p = projetos[i];
+    var sub = p.modo === 'sobreviventes'
+      ? 'Modo Sobreviventes (NEX 0%) · ' + p.qtdPlayers + ' Players'
+      : 'Agentes NEX ' + p.nexMedio + '% · ' + p.qtdPlayers + ' Players';
+    h += '<div class="card" style="display:flex; justify-content:space-between; align-items:center; border-left:4px solid var(--accent-bright);">';
+    h += '<div><h3 style="font-size:1.05rem; color:var(--accent-neon);">' + esc(p.titulo) + '</h3>';
+    h += '<p class="hint" style="margin:2px 0 0 0;">' + sub + ' · Elemento: <b>' + esc(p.elem1) + '</b> (' + p.cenas.length + ' Cenas, ' + p.elenco.length + ' NPCs)</p></div>';
+    h += '<div class="btnrow" style="margin:0;">';
+    h += '<button class="btn-p" type="button" data-act="abrirProj" data-arg="' + esc(p.id) + '">Planejar</button>';
+    h += '<button class="btn-s" type="button" data-act="excluirProj" data-arg="' + esc(p.id) + '">Excluir</button>';
+    h += '</div></div>';
+  }
+  box.innerHTML = h;
+}
+
+function abrirProjeto(id) {
+  for (var i = 0; i < projetos.length; i++) {
+    if (projetos[i].id === id) proj = projetos[i];
+  }
+  if (!proj) return;
+  $('view-list').className = 'view';
+  $('view-editor').className = 'view active';
+  preencherEditor();
+  aba('nucleo');
+  window.scrollTo(0, 0);
+}
+
+function preencherEditor() {
+  if (!proj) return;
+  $('ed-title').textContent = proj.titulo;
+  $('p-titulo').value = proj.titulo;
+  $('p-modo').value = proj.modo;
+  $('p-qtd-players').value = proj.qtdPlayers;
+  $('p-nex-medio').value = proj.nexMedio;
+  $('p-elem1').value = proj.elem1;
+  $('p-elem2').value = proj.elem2;
+  $('p-chamado').value = proj.chamado;
+  $('p-verdade').value = proj.verdade;
+  $('p-relogio').value = proj.relogio;
+  $('p-ato1').value = proj.ato1;
+  $('p-ato2').value = proj.ato2;
+  $('p-ato3').value = proj.ato3;
+  $('p-recompensas').value = proj.recompensas;
+
+  $('col-nex-medio').style.display = proj.modo === 'sobreviventes' ? 'none' : 'block';
+
+  renderCenasPlan();
+  renderElenco();
+  renderLocaisPlan();
+  renderEncontros();
+  renderDossieFinal();
+}
+
+/* --- ABA 3: TEIA DE CENAS & PISTAS --- */
+function renderCenasPlan() {
+  var list = proj.cenas, h = '';
+  for (var i = 0; i < list.length; i++) {
+    var cn = list[i];
+    if (!Array.isArray(cn.pistas)) cn.pistas = [];
+    var urgInfo = URGENCIA_MAP[cn.urgencia] || URGENCIA_MAP["Médio"];
+
+    // Verifica escalonamento de DTs (15 / 20 / 25+)
+    var tem15 = false, tem20 = false, tem25 = false;
+    for (var k = 0; k < cn.pistas.length; k++) {
+      var dtStr = String(cn.pistas[k].dt || '');
+      if (dtStr.indexOf('15') !== -1 || dtStr.indexOf('10') !== -1) tem15 = true;
+      if (dtStr.indexOf('20') !== -1) tem20 = true;
+      if (dtStr.indexOf('25') !== -1 || dtStr.indexOf('30') !== -1) tem25 = true;
+    }
+
+    h += '<div class="card" style="border-left:4px solid var(--accent-bright);">';
+    h += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">';
+    h += '<input type="text" value="' + esc(cn.nome) + '" data-cl="cenas" data-i="' + i + '" data-k="nome" style="font-weight:bold; color:var(--accent-bright); flex:1; margin-right:8px;">';
+    h += '<button class="btn-s btn-sm" type="button" data-act="delCenaPlan" data-i="' + i + '">Excluir</button>';
+    h += '</div>';
+
+    h += '<div class="cols">';
+    h += '<div><label>Tipo de Cena</label><select data-cl="cenas" data-i="' + i + '" data-k="tipo">';
+    h += '<option value="Principal"' + (cn.tipo === 'Principal' ? ' selected' : '') + '>Principal (3–4 Pistas)</option>';
+    h += '<option value="Secundária"' + (cn.tipo === 'Secundária' ? ' selected' : '') + '>Secundária / Rápida (1 Pista)</option>';
+    h += '</select></div>';
+    h += '<div><label>Grau de Urgência (p. 81)</label><select data-cl="cenas" data-i="' + i + '" data-k="urgencia">';
+    for (var uKey in URGENCIA_MAP) {
+      h += '<option value="' + uKey + '"' + (cn.urgencia === uKey ? ' selected' : '') + '>' + uKey + ' (' + URGENCIA_MAP[uKey].desc + ')</option>';
+    }
+    h += '</select></div>';
+    h += '</div>';
+
+    h += '<div style="margin-bottom:8px;">';
+    h += '<label class="lbl-top">Caixa de Leitura / Ambientação Sensorial (Para ler aos jogadores)</label>';
+    h += '<textarea data-cl="cenas" data-i="' + i + '" data-k="leitura" style="height:65px;" placeholder="Descreva o que os sentidos captam ao entrar no local...">' + esc(cn.leitura || '') + '</textarea>';
+    h += '</div>';
+
+    // Indicador da Regra das 3 Pistas / DTs
+    h += '<div style="margin-bottom:8px;">';
+    if (cn.tipo === 'Principal') {
+      h += '<span class="chip ' + (cn.pistas.length >= 3 ? 'chip-ok' : 'chip-orange') + '">Pistas: ' + cn.pistas.length + '/3+</span>';
+      h += '<span class="chip ' + (tem15 ? 'chip-ok' : 'chip-blue') + '">DT 15 (Baixa)</span>';
+      h += '<span class="chip ' + (tem20 ? 'chip-ok' : 'chip-blue') + '">DT 20 (Média)</span>';
+      h += '<span class="chip ' + (tem25 ? 'chip-ok' : 'chip-blue') + '">DT 25+ (Alta)</span>';
+    } else {
+      h += '<span class="chip ' + (cn.pistas.length >= 1 ? 'chip-ok' : 'chip-orange') + '">Cena Rápida: ' + cn.pistas.length + ' Pista</span>';
+    }
+    h += '</div>';
+
+    h += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">';
+    h += '<b style="font-size:0.82rem; color:var(--accent-neon); text-transform:uppercase;">Pontos de Interesse &amp; Pistas</b>';
+    h += '<button class="btn-p btn-sm" type="button" data-act="addPistaPlan" data-i="' + i + '">+ Adicionar Pista</button>';
+    h += '</div>';
+
+    for (var p = 0; p < cn.pistas.length; p++) {
+      var pt = cn.pistas[p];
+      h += '<div class="sub">';
+      h += '<div class="cols">';
+      h += '<div style="flex:2"><label>Ponto de Interesse / Pista</label><input type="text" value="' + esc(pt.titulo) + '" data-pista-c="' + i + '" data-pista-p="' + p + '" data-pista-k="titulo" placeholder="Ex: Gaveta Trancada"></div>';
+      h += '<div><label>Perícia &amp; DT</label><input type="text" value="' + esc(pt.dt) + '" data-pista-c="' + i + '" data-pista-p="' + p + '" data-pista-k="dt" placeholder="Investigação DT 15"></div>';
+      h += '<div><label>Aponta para (Próxima Cena)</label><input type="text" value="' + esc(pt.destino || '') + '" data-pista-c="' + i + '" data-pista-p="' + p + '" data-pista-k="destino" placeholder="Ex: Cena 2"></div>';
+      h += '</div>';
+      h += '<div style="display:flex; align-items:center;">';
+      h += '<input type="text" value="' + esc(pt.desc) + '" data-pista-c="' + i + '" data-pista-p="' + p + '" data-pista-k="desc" placeholder="Informação revelada ao passar no teste..." style="flex:1; margin-right:6px;">';
+      h += '<button class="btn-s btn-sm" type="button" data-act="delPistaPlan" data-c="' + i + '" data-p="' + p + '">X</button>';
+      h += '</div></div>';
+    }
+    if (!cn.pistas.length) h += '<p class="hint">Nenhuma pista cadastrada nesta cena ainda.</p>';
+    h += '</div>';
+  }
+  $('cenas-plan-list').innerHTML = h || '<p class="hint">Nenhuma cena planejada ainda. Comece adicionando o primeiro nó de investigação.</p>';
+}
+
+/* --- ABA 4: ELENCO NARRATIVO & LOCAIS --- */
+function renderElenco() {
+  var list = proj.elenco, h = '';
+  var papeis = ["Antagonista", "Aliado / Contato", "Suspeito", "Vítima", "Coadjuvante Neutro"];
+  var atitudes = ["Prestativo (+5)", "Amistoso", "Indiferente", "Inamistoso (–5)", "Hostil"];
+
+  for (var i = 0; i < list.length; i++) {
+    var npc = list[i];
+    if (!Array.isArray(npc.relacoes)) npc.relacoes = [];
+    var chipCls = npc.papel === 'Antagonista' ? 'chip-red' : (npc.papel === 'Aliado / Contato' ? 'chip-ok' : (npc.papel === 'Suspeito' ? 'chip-orange' : 'chip-blue'));
+
+    h += '<div class="card" style="border-left:4px solid var(--accent-bright);">';
+    h += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap;">';
+    h += '<div><b style="font-size:1.05rem; color:var(--accent-neon)">' + esc(npc.nome) + '</b> <span class="chip ' + chipCls + '">' + esc(npc.papel) + '</span>';
+    if (npc.faixaEtaria) h += '<span class="chip chip-blue">' + esc(npc.faixaEtaria) + '</span>';
+    h += '</div>';
+    h += '<div class="btnrow" style="margin:0;">';
+    h += '<button class="btn-s btn-sm" type="button" data-act="rerrolarNpcElenco" data-i="' + i + '">&#127922; Rerrolar Tab. 6.2 + Roupa</button>';
+    h += '<button class="btn-s btn-sm" type="button" data-act="delNpcElenco" data-i="' + i + '">Excluir</button>';
+    h += '</div></div>';
+
+    h += '<div class="cols">';
+    h += '<div style="flex:2"><label>Nome</label><input type="text" value="' + esc(npc.nome) + '" data-cl="elenco" data-i="' + i + '" data-k="nome"></div>';
+    h += '<div><label>Papel na Trama</label><select data-cl="elenco" data-i="' + i + '" data-k="papel">';
+    for (var p = 0; p < papeis.length; p++) h += '<option value="' + papeis[p] + '"' + (npc.papel === papeis[p] ? ' selected' : '') + '>' + papeis[p] + '</option>';
+    h += '</select></div>';
+    h += '<div><label>Atitude Inicial (p. 77)</label><select data-cl="elenco" data-i="' + i + '" data-k="atitude">';
+    for (var a = 0; a < atitudes.length; a++) h += '<option value="' + atitudes[a] + '"' + (npc.atitude === atitudes[a] ? ' selected' : '') + '>' + atitudes[a] + '</option>';
+    h += '</select></div>';
+    h += '</div>';
+
+    h += '<div class="cols">';
+    h += '<div><label>Ocupação / Arquétipo</label><input type="text" value="' + esc(npc.ocupacao || '') + '" data-cl="elenco" data-i="' + i + '" data-k="ocupacao"></div>';
+    h += '<div><label>Faixa Etária (p. 164)</label><input type="text" value="' + esc(npc.faixaEtaria || '') + '" data-cl="elenco" data-i="' + i + '" data-k="faixaEtaria"></div>';
+    h += '<div><label>Motivação Principal</label><input type="text" value="' + esc(npc.motivacao || '') + '" data-cl="elenco" data-i="' + i + '" data-k="motivacao" placeholder="O que ele quer?"></div>';
+    h += '</div>';
+
+    h += '<div class="cols">';
+    h += '<div><label>O que ele SABE (Entrega fácil)</label><input type="text" value="' + esc(npc.sabe || '') + '" data-cl="elenco" data-i="' + i + '" data-k="sabe"></div>';
+    h += '<div><label>O que ele ESCONDE (Exige teste/DT)</label><input type="text" value="' + esc(npc.esconde || '') + '" data-cl="elenco" data-i="' + i + '" data-k="esconde"></div>';
+    h += '</div>';
+
+    h += '<div class="cols">';
+    h += '<div><label>Aparência (Tab. 6.2) &amp; Roupas</label><textarea data-cl="elenco" data-i="' + i + '" data-k="aparencia" style="height:64px;">' + esc(npc.aparencia || '') + '</textarea></div>';
+    h += '<div><label>Personalidade (Tab. 6.2)</label><textarea data-cl="elenco" data-i="' + i + '" data-k="personalidade" style="height:64px;">' + esc(npc.personalidade || '') + '</textarea></div>';
+    h += '</div>';
+
+    // Vínculos prévios (3 bolinhas)
+    h += '<div class="sub" style="margin-bottom:0;">';
+    h += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">';
+    h += '<b style="font-size:0.8rem; color:var(--accent-bright); text-transform:uppercase;">&#9733; Vínculos / Relacionamento Inicial (1 a 3 Pontos)</b>';
+    h += '<button class="btn-s btn-sm" type="button" data-act="addRelElenco" data-i="' + i + '">+ Vincular Agente</button>';
+    h += '</div>';
+    for (var r = 0; r < npc.relacoes.length; r++) {
+      var rel = npc.relacoes[r], pts = parseInt(rel.pts, 10) || 0;
+      h += '<div class="rel-row">';
+      h += '<input type="text" value="' + esc(rel.player) + '" placeholder="Nome do Agente" data-rel-npc="' + i + '" data-rel-idx="' + r + '" data-rel-k="player" style="flex:1; min-width:90px;">';
+      h += '<div class="rel-dots">';
+      for (var d = 1; d <= 3; d++) {
+        h += '<button type="button" class="rel-dot' + (pts >= d ? ' filled' : '') + '" data-act="setRelElenco" data-npc="' + i + '" data-rel="' + r + '" data-pts="' + d + '">' + d + '</button>';
+      }
+      h += '</div>';
+      h += '<input type="text" value="' + esc(rel.obs || '') + '" placeholder="Histórico do vínculo..." data-rel-npc="' + i + '" data-rel-idx="' + r + '" data-rel-k="obs" style="flex:1; min-width:80px; margin-right:6px;">';
+      h += '<button class="btn-s btn-sm" type="button" data-act="delRelElenco" data-npc="' + i + '" data-rel="' + r + '">X</button>';
+      h += '</div>';
+    }
+    h += '</div></div>';
+  }
+  $('elenco-list').innerHTML = h || '<p class="hint">Nenhum personagem no elenco ainda.</p>';
+}
+
+function renderLocaisPlan() {
+  var list = proj.locais, h = '';
+  for (var i = 0; i < list.length; i++) {
+    var lc = list[i];
+    h += '<div class="sub">';
+    h += '<div class="cols">';
+    h += '<div><label>Nome do Local</label><input type="text" value="' + esc(lc.nome) + '" data-cl="locais" data-i="' + i + '" data-k="nome"></div>';
+    h += '<div><label>Clima / Atmosfera</label><input type="text" value="' + esc(lc.clima || '') + '" data-cl="locais" data-i="' + i + '" data-k="clima"></div>';
+    h += '</div>';
+    h += '<textarea data-cl="locais" data-i="' + i + '" data-k="detalhes" style="height:60px;" placeholder="Pontos de interesse, arquitetura e segredos do local...">' + esc(lc.detalhes || '') + '</textarea>';
+    h += '<button class="btn-s btn-sm" type="button" data-act="delLocalPlan" data-i="' + i + '" style="margin-top:6px;">Remover Local</button>';
+    h += '</div>';
+  }
+  $('locais-plan-list').innerHTML = h || '<p class="hint">Nenhum local cadastrado.</p>';
+}
+
+/* --- ABA 5: BALANCEADOR DE ENCONTROS & VD --- */
+function renderEncontros() {
+  var boxResumo = $('vd-resumo-box');
+  var isSobrev = proj.modo === 'sobreviventes';
+  var nexGrupo = num(proj.qtdPlayers) * num(proj.nexMedio);
+
+  if (isSobrev) {
+    boxResumo.innerHTML = '<div class="sub" style="border-color:#f97316;">' +
+      '<b style="color:#fdba74;">&#9888; MODO SOBREVIVENTES (NEX 0% / Estágios 1–5 — SaH p. 30)</b><br>' +
+      '<span style="font-size:0.85rem;">Civis têm limite fixo de 1 PE/turno e <b>não usam cálculo de VD</b>. Combate direto contra criaturas paranormais (mesmo VD 20) é sentença de morte: planeje cenas de <b>Furtividade (pp. 92–93)</b> ou <b>Perseguição (pp. 90–91)</b>, ou use apenas Ameaças da Realidade civis de <b>VD 10 a 20</b>.</span></div>';
+  } else {
+    var vdFacil = Math.round(nexGrupo * 0.5);
+    var vdEq = nexGrupo;
+    var vdDif = Math.round(nexGrupo * 1.5);
+    var vdVet = nexGrupo * 2;
+    boxResumo.innerHTML = '<div class="minis">' +
+      '<div class="mini"><small>NEX do Grupo</small><b>' + nexGrupo + '%</b></div>' +
+      '<div class="mini"><small>Fácil (0,5x)</small><b>VD ' + vdFacil + '</b></div>' +
+      '<div class="mini"><small>Equilibrado (1x)</small><b>VD ' + vdEq + '</b></div>' +
+      '<div class="mini"><small>Difícil (1,5x)</small><b>VD ' + vdDif + '</b></div>' +
+      '</div><div class="hint" style="margin:0;">Para grupos veteranos (p. 171), combates extremos chegam a <b>VD ' + vdVet + ' (2x)</b>.</div>';
+  }
+
+  var list = proj.encontros, h = '';
+  for (var i = 0; i < list.length; i++) {
+    var enc = list[i];
+    if (!Array.isArray(enc.inimigos)) enc.inimigos = [];
+
+    var vdTotal = 0;
+    for (var k = 0; k < enc.inimigos.length; k++) {
+      vdTotal += num(enc.inimigos[k].vd) * (num(enc.inimigos[k].qtd) || 1);
+    }
+
+    var badge = '';
+    if (isSobrev) {
+      if (vdTotal === 0) badge = '<span class="chip chip-blue">Cena de Fuga / Furtividade</span>';
+      else if (vdTotal <= 20) badge = '<span class="chip chip-ok">VD ' + vdTotal + ' (Viável p/ Civis)</span>';
+      else badge = '<span class="chip chip-red">VD ' + vdTotal + ' (LETAL P/ SOBREVIVENTES — USE FUGA!)</span>';
+    } else {
+      var ratio = nexGrupo > 0 ? (vdTotal / nexGrupo) : 0;
+      if (vdTotal === 0) badge = '<span class="chip chip-blue">Sem inimigos</span>';
+      else if (ratio < 0.5) badge = '<span class="chip chip-blue">VD ' + vdTotal + ' (Trivial &lt;0,5x)</span>';
+      else if (ratio <= 0.75) badge = '<span class="chip chip-ok">VD ' + vdTotal + ' (Fácil ~0,5x)</span>';
+      else if (ratio <= 1.25) badge = '<span class="chip chip-ok">VD ' + vdTotal + ' (Equilibrado ~1x)</span>';
+      else if (ratio <= 1.75) badge = '<span class="chip chip-orange">VD ' + vdTotal + ' (Difícil ~1,5x)</span>';
+      else if (ratio <= 2.1) badge = '<span class="chip chip-purple">VD ' + vdTotal + ' (Extremo / Veteranos 2x)</span>';
+      else badge = '<span class="chip chip-red">VD ' + vdTotal + ' (MORTAL &gt;2x NEX!)</span>';
+    }
+
+    h += '<div class="card">';
+    h += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap;">';
+    h += '<div style="flex:1; display:flex; align-items:center; margin-right:8px;">';
+    h += '<input type="text" value="' + esc(enc.nome) + '" data-cl="encontros" data-i="' + i + '" data-k="nome" style="font-weight:bold; flex:1; margin-right:8px;">';
+    h += badge + '</div>';
+    h += '<button class="btn-s btn-sm" type="button" data-act="delEncontro" data-i="' + i + '">Excluir</button>';
+    h += '</div>';
+
+    h += '<div style="margin-bottom:8px;"><button class="btn-p btn-sm" type="button" data-act="addInimigoEnc" data-i="' + i + '">+ Adicionar Inimigo / Criatura</button></div>';
+
+    for (var j = 0; j < enc.inimigos.length; j++) {
+      var ini = enc.inimigos[j];
+      h += '<div class="cols" style="align-items:flex-end; background:var(--input); padding:6px; border-radius:6px;">';
+      h += '<div style="flex:3"><label>Ameaça / Criatura</label><input type="text" value="' + esc(ini.nome) + '" data-ini-e="' + i + '" data-ini-j="' + j + '" data-ini-k="nome"></div>';
+      h += '<div><label>VD Unit.</label><input type="number" value="' + num(ini.vd) + '" data-ini-e="' + i + '" data-ini-j="' + j + '" data-ini-k="vd" data-num="1"></div>';
+      h += '<div><label>Qtd.</label><input type="number" value="' + num(ini.qtd) + '" data-ini-e="' + i + '" data-ini-j="' + j + '" data-ini-k="qtd" data-num="1" min="1"></div>';
+      h += '<div style="flex:0;"><button class="btn-s btn-sm" type="button" data-act="delInimigoEnc" data-e="' + i + '" data-j="' + j + '">X</button></div>';
+      h += '</div>';
+    }
+
+    h += '<div style="margin-top:6px;"><label class="lbl-top">Tática do Combate / Ambiente / Condições Especiais</label>';
+    h += '<textarea data-cl="encontros" data-i="' + i + '" data-k="tatica" style="height:55px;" placeholder="Como as criaturas agem, cobertura no terreno, objetivos alternativos...">' + esc(enc.tatica || '') + '</textarea></div>';
+    h += '</div>';
+  }
+  $('encontros-list').innerHTML = h || '<p class="hint">Nenhum encontro planejado ainda.</p>';
+}
+
+/* --- ABA 6: DOSSIÊ FINAL (MODO LEITURA LIMPO) --- */
+function gerarTextoRoteiro() {
+  if (!proj) return '';
+  var out = '=== DOSSIÊ DE MISSÃO: ' + proj.titulo.toUpperCase() + ' ===\n';
+  out += 'Modo: ' + (proj.modo === 'sobreviventes' ? 'Sobreviventes (NEX 0%)' : 'Agentes NEX ' + proj.nexMedio + '%') + ' (' + proj.qtdPlayers + ' jogadores)\n';
+  out += 'Elementos: ' + proj.elem1 + (proj.elem2 !== 'Nenhum' ? ' + ' + proj.elem2 : '') + '\n\n';
+  out += '--- O CHAMADO ---\n' + (proj.chamado || '-') + '\n\n';
+  out += '--- A VERDADE OCULTA ---\n' + (proj.verdade || '-') + '\n\n';
+  out += '--- RELÓGIO DO VILÃO ---\n' + (proj.relogio || '-') + '\n\n';
+  out += '--- ROTEIRO POR ATOS ---\n';
+  out += '[ATO I]: ' + (proj.ato1 || '-') + '\n';
+  out += '[ATO II]: ' + (proj.ato2 || '-') + '\n';
+  out += '[ATO III]: ' + (proj.ato3 || '-') + '\n\n';
+  out += '--- CENAS & PISTAS ---\n';
+  for (var i = 0; i < proj.cenas.length; i++) {
+    var c = proj.cenas[i];
+    out += '* ' + c.nome + ' (' + c.tipo + ' | Urgência: ' + c.urgencia + ')\n';
+    if (c.leitura) out += '  Leitura: "' + c.leitura + '"\n';
+    for (var p = 0; p < (c.pistas || []).length; p++) {
+      var pt = c.pistas[p];
+      out += '  - [' + pt.dt + '] ' + pt.titulo + ': ' + pt.desc + (pt.destino ? ' -> Aponta para: ' + pt.destino : '') + '\n';
+    }
+  }
+  out += '\n--- ELENCO ---\n';
+  for (var e = 0; e < proj.elenco.length; e++) {
+    var n = proj.elenco[e];
+    out += '* ' + n.nome + ' (' + n.papel + ' | ' + (n.faixaEtaria || '') + ' | Atitude: ' + n.atitude + ')\n';
+    out += '  Motivação: ' + (n.motivacao || '-') + ' | Sabe: ' + (n.sabe || '-') + ' | Esconde: ' + (n.esconde || '-') + '\n';
+    out += '  Aparência/Roupas: ' + (n.aparencia || '-') + '\n';
+  }
+  return out;
+}
+
+function renderDossieFinal() {
+  if (!proj) return;
+  var box = $('dossie-publicado-container');
+  var subInfo = proj.modo === 'sobreviventes'
+    ? 'Modo Sobreviventes (NEX 0%) · ' + proj.qtdPlayers + ' Players'
+    : 'Equipe de ' + proj.qtdPlayers + ' Agentes (NEX Médio ' + proj.nexMedio + '%)';
+
+  var h = '<div class="book-doc">';
+  h += '<div class="book-h1">' + esc(proj.titulo) + '</div>';
+  h += '<div style="margin-bottom:12px;"><span class="chip chip-blue">' + subInfo + '</span> <span class="chip chip-purple">Elemento: ' + esc(proj.elem1) + (proj.elem2 !== 'Nenhum' ? ' / ' + esc(proj.elem2) : '') + '</span></div>';
+
+  h += '<div class="book-h2">1. Núcleo do Mistério</div>';
+  h += '<p><b>O Chamado:</b> ' + esc(proj.chamado || 'Não preenchido.').replace(/\n/g, '<br>') + '</p><br>';
+  h += '<p><b>A Verdade Oculta:</b> ' + esc(proj.verdade || 'Não preenchido.').replace(/\n/g, '<br>') + '</p><br>';
+  h += '<p><b>Relógio do Vilão:</b><br>' + esc(proj.relogio || 'Não preenchido.').replace(/\n/g, '<br>') + '</p>';
+
+  h += '<div class="book-h2">2. Estrutura em 3 Atos &amp; Recompensas</div>';
+  h += '<p><b>Ato I (Incidente):</b> ' + esc(proj.ato1 || '-').replace(/\n/g, '<br>') + '</p><br>';
+  h += '<p><b>Ato II (Investigação):</b> ' + esc(proj.ato2 || '-').replace(/\n/g, '<br>') + '</p><br>';
+  h += '<p><b>Ato III (Clímax):</b> ' + esc(proj.ato3 || '-').replace(/\n/g, '<br>') + '</p><br>';
+  h += '<p><b>Recompensas:</b> ' + esc(proj.recompensas || '-').replace(/\n/g, '<br>') + '</p>';
+
+  h += '<div class="book-h2">3. Cenas de Investigação &amp; Pistas</div>';
+  for (var i = 0; i < proj.cenas.length; i++) {
+    var cn = proj.cenas[i];
+    var urg = URGENCIA_MAP[cn.urgencia] ? URGENCIA_MAP[cn.urgencia].desc : cn.urgencia;
+    h += '<div style="margin-bottom:12px;">';
+    h += '<b style="color:var(--accent-bright);">' + esc(cn.nome) + '</b> <span class="chip chip-blue">' + esc(cn.tipo) + ' · ' + esc(urg) + '</span>';
+    if (cn.leitura) h += '<div class="read-aloud-box">"' + esc(cn.leitura) + '"</div>';
+    for (var p = 0; p < (cn.pistas || []).length; p++) {
+      var pt = cn.pistas[p];
+      h += '<div style="margin-left:10px; margin-bottom:4px;">&bull; <b>[' + esc(pt.dt) + '] ' + esc(pt.titulo) + ':</b> ' + esc(pt.desc) + (pt.destino ? ' <i>(&rarr; ' + esc(pt.destino) + ')</i>' : '') + '</div>';
+    }
+    h += '</div>';
+  }
+
+  h += '<div class="book-h2">4. Elenco Narrativo &amp; Locais</div>';
+  for (var e = 0; e < proj.elenco.length; e++) {
+    var npc = proj.elenco[e];
+    h += '<div style="margin-bottom:10px; padding-bottom:8px; border-bottom:1px dashed var(--border-app);">';
+    h += '<b style="color:var(--accent-bright);">' + esc(npc.nome) + '</b> (' + esc(npc.papel) + ' · ' + esc(npc.faixaEtaria || '') + ' · Atitude: ' + esc(npc.atitude) + ')<br>';
+    h += '<small><b>Motivação:</b> ' + esc(npc.motivacao || '-') + ' | <b>Sabe:</b> ' + esc(npc.sabe || '-') + ' | <b>Esconde:</b> ' + esc(npc.esconde || '-') + '</small><br>';
+    h += '<small><b>Descrição:</b> ' + esc(npc.aparencia || '') + ' ' + esc(npc.personalidade || '') + '</small>';
+    h += '</div>';
+  }
+  for (var l = 0; l < proj.locais.length; l++) {
+    var lc = proj.locais[l];
+    h += '<div style="margin-bottom:6px;">&bull; <b>Local — ' + esc(lc.nome) + ':</b> <i>' + esc(lc.clima) + '</i>. ' + esc(lc.detalhes) + '</div>';
+  }
+
+  h += '<div class="book-h2">5. Encontros Planejados</div>';
+  for (var m = 0; m < proj.encontros.length; m++) {
+    var enc = proj.encontros[m];
+    var vdSum = 0, listaIni = [];
+    for (var j = 0; j < (enc.inimigos || []).length; j++) {
+      var ini = enc.inimigos[j];
+      vdSum += num(ini.vd) * (num(ini.qtd) || 1);
+      listaIni.push((ini.qtd || 1) + 'x ' + ini.nome + ' (VD ' + ini.vd + ')');
+    }
+    h += '<div style="margin-bottom:8px;"><b>' + esc(enc.nome) + ' (VD Total: ' + vdSum + '):</b> ' + esc(listaIni.join(', ') || 'Nenhum inimigo') + '<br><small>Tática: ' + esc(enc.tatica || '-') + '</small></div>';
+  }
+
+  h += '</div>';
+  box.innerHTML = h;
+}
+
+function aba(nome) {
+  var tabs = document.querySelectorAll('.sheet-tab'), i;
+  for (i = 0; i < tabs.length; i++) tabs[i].className = 'sheet-tab' + (tabs[i].id === 'tab-' + nome ? ' active' : '');
+  var bt = document.querySelectorAll('.tab');
+  for (i = 0; i < bt.length; i++) bt[i].className = 'tab' + (bt[i].getAttribute('data-arg') === nome ? ' active' : '');
+  if (nome === 'leitura') renderDossieFinal();
+  window.scrollTo(0, 0);
+}
+
+/* --- AÇÕES CENTRALIZADAS --- */
+var ACOES = {
+  novoProjeto: function () {
+    var novo = normalizarProj({titulo: 'Caso #' + (projetos.length + 1)});
+    projetos.unshift(novo);
+    salvarAgora();
+    abrirProjeto(novo.id);
+  },
+  abrirProj: function (el) { abrirProjeto(el.getAttribute('data-arg')); },
+  excluirProj: function (el) {
+    var id = el.getAttribute('data-arg');
+    if (!confirm('Apagar este projeto de campanha?')) return;
+    projetos = projetos.filter(function (p) { return p.id !== id; });
+    salvarAgora();
+    renderListaProjetos();
+  },
+  voltar: function () {
+    salvarAgora();
+    $('view-editor').className = 'view';
+    $('view-list').className = 'view active';
+    renderListaProjetos();
+  },
+  salvar: function () { salvarAgora(); toast('Projeto salvo!'); },
+  aba: function (el) { aba(el.getAttribute('data-arg')); },
+
+  themeToggle: function () {
+    var m = $('theme-menu');
+    m.style.display = m.style.display === 'block' ? 'none' : 'block';
+  },
+  mudarTema: function (el) {
+    var tema = el.getAttribute('data-arg') || 'medo';
+    document.documentElement.setAttribute('data-theme', tema);
+    localStorage.setItem('arquiteto_op_theme', tema);
+    $('theme-menu').style.display = 'none';
+    toast('Elemento sintonizado: ' + tema.toUpperCase());
+  },
+  toggleScanlines: function () {
+    scanlinesAtivo = !scanlinesAtivo;
+    $('scanline-overlay').style.display = scanlinesAtivo ? 'block' : 'none';
+    $('theme-menu').style.display = 'none';
+    toast(scanlinesAtivo ? 'Filtro CRT Ativado' : 'Filtro CRT Desativado');
+  },
+
+  // GERADOR OFICIAL DE MISSÕES (pp. 155-161)
+  gerarSemente: function () {
+    var suj = rolarSujeito();
+    var acao = rolarAcao();
+    var loc = rolarLocal();
+    var ali = rolarAliado();
+    var obj = rolarObjeto();
+    var evt = rolarEvento();
+
+    ultimaSemente = 'Um(a) ' + suj + ' ' + acao + ' em um(a) ' + loc + '. ' +
+      'Durante a investigação, o grupo terá a ajuda de um(a) ' + ali + ' e poderá encontrar ' + obj + '. ' +
+      'Porém, em determinado momento os agentes serão surpreendidos por ' + evt + '.';
+
+    var box = $('box-semente');
+    box.innerHTML = '<b style="color:var(--accent-bright); text-transform:uppercase;">Semente Gerada (Livro Base pp. 155–161):</b><br><br>' +
+      'Um(a) <b>' + esc(suj) + '</b> <b>' + esc(acao) + '</b> em um(a) <b>' + esc(loc) + '</b>. ' +
+      'Durante a investigação, o grupo terá a ajuda de um(a) <b>' + esc(ali) + '</b> e poderá encontrar <b>' + esc(obj) + '</b>. ' +
+      'Porém, em determinado momento os agentes serão surpreendidos por <b>' + esc(evt) + '</b>.';
+    box.style.display = 'block';
+    $('btn-aplicar-semente').style.display = 'inline-block';
+  },
+  aplicarSemente: function () {
+    if (!ultimaSemente) return;
+    proj.verdade = (proj.verdade ? proj.verdade + '\n\n' : '') + 'Semente Base: ' + ultimaSemente;
+    $('p-verdade').value = proj.verdade;
+    agendarSalvar();
+    toast('Semente copiada para A Verdade Oculta!');
+  },
+
+  // CENAS & PISTAS
+  addCenaPlanejada: function () {
+    proj.cenas.push({
+      nome: 'Cena ' + (proj.cenas.length + 1) + ': Novo Local de Investigação',
+      tipo: 'Principal',
+      urgencia: 'Médio',
+      leitura: '',
+      pistas: [
+        {titulo: 'Pista Principal (Fácil)', dt: 'Investigação DT 15', desc: '', destino: ''},
+        {titulo: 'Pista Oculta (Média)', dt: 'Percepção DT 20', desc: '', destino: ''},
+        {titulo: 'Segredo Profundo (Difícil)', dt: 'Ocultismo DT 25', desc: '', destino: ''}
+      ]
+    });
+    renderCenasPlan(); agendarSalvar();
+  },
+  delCenaPlan: function (el) {
+    proj.cenas.splice(parseInt(el.getAttribute('data-i'), 10), 1);
+    renderCenasPlan(); agendarSalvar();
+  },
+  addPistaPlan: function (el) {
+    var i = parseInt(el.getAttribute('data-i'), 10);
+    proj.cenas[i].pistas.push({titulo: 'Nova Pista', dt: 'Investigação DT 15', desc: '', destino: ''});
+    renderCenasPlan(); agendarSalvar();
+  },
+  delPistaPlan: function (el) {
+    var c = parseInt(el.getAttribute('data-c'), 10);
+    var p = parseInt(el.getAttribute('data-p'), 10);
+    proj.cenas[c].pistas.splice(p, 1);
+    renderCenasPlan(); agendarSalvar();
+  },
+
+  // ELENCO & LOCAIS
+  gerarNpcElenco: function () {
+    var nomeSort = NOMES_NPC[Math.floor(Math.random() * NOMES_NPC.length)] + ' ' + SOBRENOMES_NPC[Math.floor(Math.random() * SOBRENOMES_NPC.length)];
+    var tab62 = sortearTabela62(3);
+    var roupa = sortearRoupa();
+    var idade = rolarFaixaEtaria();
+    var papeis = ["Aliado / Contato", "Suspeito", "Vítima", "Coadjuvante Neutro"];
+    var atitudes = ["Prestativo (+5)", "Amistoso", "Indiferente", "Inamistoso (–5)"];
+
+    proj.elenco.unshift({
+      nome: nomeSort,
+      papel: papeis[Math.floor(Math.random() * papeis.length)],
+      ocupacao: 'Civil / Testemunha',
+      faixaEtaria: idade,
+      atitude: atitudes[Math.floor(Math.random() * atitudes.length)],
+      motivacao: '',
+      sabe: '',
+      esconde: '',
+      aparencia: tab62.aparencia + '. ' + roupa,
+      personalidade: tab62.personalidade + '.',
+      relacoes: []
+    });
+    renderElenco(); agendarSalvar();
+    toast('Personagem gerado: ' + nomeSort);
+  },
+  rerrolarNpcElenco: function (el) {
+    var i = parseInt(el.getAttribute('data-i'), 10);
+    var npc = proj.elenco[i];
+    if (!npc) return;
+    var tab62 = sortearTabela62(3);
+    npc.faixaEtaria = rolarFaixaEtaria();
+    npc.aparencia = tab62.aparencia + '. ' + sortearRoupa();
+    npc.personalidade = tab62.personalidade + '.';
+    renderElenco(); agendarSalvar();
+    toast('Traços e roupas rerrolados!');
+  },
+  addNpcElencoVazio: function () {
+    proj.elenco.unshift({
+      nome: 'Novo Personagem', papel: 'Suspeito', ocupacao: '', faixaEtaria: 'Adulto (32 anos)',
+      atitude: 'Indiferente', motivacao: '', sabe: '', esconde: '', aparencia: '', personalidade: '', relacoes: []
+    });
+    renderElenco(); agendarSalvar();
+  },
+  delNpcElenco: function (el) {
+    proj.elenco.splice(parseInt(el.getAttribute('data-i'), 10), 1);
+    renderElenco(); agendarSalvar();
+  },
+  addRelElenco: function (el) {
+    var i = parseInt(el.getAttribute('data-i'), 10);
+    proj.elenco[i].relacoes.push({player: 'Agente', pts: 1, obs: ''});
+    renderElenco(); agendarSalvar();
+  },
+  setRelElenco: function (el) {
+    var nIdx = parseInt(el.getAttribute('data-npc'), 10);
+    var rIdx = parseInt(el.getAttribute('data-rel'), 10);
+    var pts = parseInt(el.getAttribute('data-pts'), 10);
+    var rel = proj.elenco[nIdx].relacoes[rIdx];
+    rel.pts = (rel.pts === pts) ? 0 : pts;
+    renderElenco(); agendarSalvar();
+  },
+  delRelElenco: function (el) {
+    var nIdx = parseInt(el.getAttribute('data-npc'), 10);
+    var rIdx = parseInt(el.getAttribute('data-rel'), 10);
+    proj.elenco[nIdx].relacoes.splice(rIdx, 1);
+    renderElenco(); agendarSalvar();
+  },
+  addLocalPlan: function () {
+    proj.locais.push({nome: 'Novo Cenário', clima: 'Escuro e tenso', detalhes: ''});
+    renderLocaisPlan(); agendarSalvar();
+  },
+  delLocalPlan: function (el) {
+    proj.locais.splice(parseInt(el.getAttribute('data-i'), 10), 1);
+    renderLocaisPlan(); agendarSalvar();
+  },
+
+  // ENCONTROS & VD
+  addEncontro: function () {
+    proj.encontros.push({
+      nome: 'Encontro #' + (proj.encontros.length + 1),
+      inimigos: [{nome: 'Criatura / Ameaça', vd: 20, qtd: 1}],
+      tatica: ''
+    });
+    renderEncontros(); agendarSalvar();
+  },
+  delEncontro: function (el) {
+    proj.encontros.splice(parseInt(el.getAttribute('data-i'), 10), 1);
+    renderEncontros(); agendarSalvar();
+  },
+  addInimigoEnc: function (el) {
+    var i = parseInt(el.getAttribute('data-i'), 10);
+    proj.encontros[i].inimigos.push({nome: 'Nova Ameaça', vd: 20, qtd: 1});
+    renderEncontros(); agendarSalvar();
+  },
+  delInimigoEnc: function (el) {
+    var e = parseInt(el.getAttribute('data-e'), 10);
+    var j = parseInt(el.getAttribute('data-j'), 10);
+    proj.encontros[e].inimigos.splice(j, 1);
+    renderEncontros(); agendarSalvar();
+  },
+
+  // EXPORTAÇÃO DE TEXTO & BACKUP JSON
+  copiarRoteiroTexto: function () {
+    var txt = gerarTextoRoteiro();
+    var ta = document.createElement('textarea');
+    ta.value = txt;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); toast('Roteiro completo copiado!'); } catch (e) { alert('Erro ao copiar.'); }
+    document.body.removeChild(ta);
+  },
+  backup: function () {
+    $('backup-text').value = JSON.stringify({app: 'arquiteto-op', projetos: projetos}, null, 2);
+    $('backup-modal').style.display = 'block';
+  },
+  bkClose: function () { $('backup-modal').style.display = 'none'; },
+  bkCopy: function () {
+    var t = $('backup-text'); t.select();
+    try { document.execCommand('copy'); toast('Backup JSON copiado!'); } catch (e) {}
+  },
+  bkShare: function () {
+    var txt = JSON.stringify({app: 'arquiteto-op', projetos: projetos}, null, 2);
+    if (navigator.share) navigator.share({title: 'Backup Arquiteto OP', text: txt}).catch(function () {});
+    else ACOES.bkCopy();
+  },
+  bkImport: function () {
+    try {
+      var p = JSON.parse($('backup-text').value);
+      var lista = p.projetos || p;
+      if (Array.isArray(lista)) {
+        projetos = lista.map(normalizarProj);
+        salvarAgora();
+        renderListaProjetos();
+        $('backup-modal').style.display = 'none';
+        toast('Projetos restaurados!');
+      }
+    } catch (e) { alert('JSON inválido!'); }
+  }
+};
+
+function onInputField(e) {
+  var el = e.target;
+  if (!proj || !el.getAttribute) return;
+
+  var pf = el.getAttribute('data-pf');
+  var cl = el.getAttribute('data-cl');
+  var pistaC = el.getAttribute('data-pista-c');
+  var relNpc = el.getAttribute('data-rel-npc');
+  var iniE = el.getAttribute('data-ini-e');
+
+  if (pf) {
+    var val = el.getAttribute('data-num') ? num(el.value) : el.value;
+    proj[pf] = val;
+    if (pf === 'titulo') $('ed-title').textContent = val || 'Caso';
+    if (pf === 'modo') {
+      $('col-nex-medio').style.display = val === 'sobreviventes' ? 'none' : 'block';
+      renderEncontros();
+    }
+    if (pf === 'qtdPlayers' || pf === 'nexMedio') renderEncontros();
+    agendarSalvar();
+  } else if (cl) {
+    var i = parseInt(el.getAttribute('data-i'), 10);
+    var k = el.getAttribute('data-k');
+    var v = el.getAttribute('data-num') ? num(el.value) : el.value;
+    if (proj[cl] && proj[cl][i]) {
+      proj[cl][i][k] = v;
+      if (cl === 'cenas' && e.type === 'change') renderCenasPlan();
+      if (cl === 'elenco' && e.type === 'change') renderElenco();
+      agendarSalvar();
+    }
+  } else if (pistaC !== null) {
+    var cIdx = parseInt(pistaC, 10);
+    var pIdx = parseInt(el.getAttribute('data-pista-p'), 10);
+    var pk = el.getAttribute('data-pista-k');
+    if (proj.cenas[cIdx] && proj.cenas[cIdx].pistas[pIdx]) {
+      proj.cenas[cIdx].pistas[pIdx][pk] = el.value;
+      if (pk === 'dt' && e.type === 'change') renderCenasPlan();
+      agendarSalvar();
+    }
+  } else if (relNpc !== null) {
+    var nIdx = parseInt(relNpc, 10);
+    var rIdx = parseInt(el.getAttribute('data-rel-idx'), 10);
+    var rk = el.getAttribute('data-rel-k');
+    if (proj.elenco[nIdx] && proj.elenco[nIdx].relacoes[rIdx]) {
+      proj.elenco[nIdx].relacoes[rIdx][rk] = el.value;
+      agendarSalvar();
+    }
+  } else if (iniE !== null) {
+    var eIdx = parseInt(iniE, 10);
+    var jIdx = parseInt(el.getAttribute('data-ini-j'), 10);
+    var ik = el.getAttribute('data-ini-k');
+    var iv = el.getAttribute('data-num') ? num(el.value) : el.value;
+    if (proj.encontros[eIdx] && proj.encontros[eIdx].inimigos[jIdx]) {
+      proj.encontros[eIdx].inimigos[jIdx][ik] = iv;
+      if (e.type === 'change') renderEncontros();
+      agendarSalvar();
+    }
+  }
+}
+
+document.addEventListener('click', function (e) {
+  var el = e.target.closest ? e.target.closest('[data-act]') : null;
+  if (!el) return;
+  var fn = ACOES[el.getAttribute('data-act')];
+  if (fn) fn(el);
+});
+document.addEventListener('input', onInputField);
+document.addEventListener('change', onInputField);
+
+var bkFile = $('bk-file');
+if (bkFile) {
+  bkFile.addEventListener('change', function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+      $('backup-text').value = String(rd.result);
+      ACOES.bkImport();
+    };
+    rd.readAsText(f);
+    this.value = '';
+  });
+}
+
+var temaSalvo = localStorage.getItem('arquiteto_op_theme') || 'medo';
+document.documentElement.setAttribute('data-theme', temaSalvo);
+
+projetos = carregar().map(normalizarProj);
+renderListaProjetos();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+})();
+</script>
+</body>
+</html>
